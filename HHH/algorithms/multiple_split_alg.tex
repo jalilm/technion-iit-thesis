@@ -1,0 +1,31 @@
+\begin{algorithm}\small
+    \SetKwInOut{Input}{Input}
+    \SetKwInOut{Output}{Output}
+    \Input{A stream of packets $S$, a threshold $\phi$, number of counters $C$ and the depth of the hierarchy $H$}
+    \Output{set of hh and hhh in $S$}
+    $F = init\_flowsets(C)$\;
+    $levels=calculate\_levels(C,H)$\;
+    $current\_level=levels[0]$\;
+    $number\_rounds=|levels|$\;
+    \ForEach{$r$ in $\{1..number\_rounds\}$}
+    {
+        $counters=assign\_counters(F)$\;
+        $packets=get\_round\_packets(r, number\_of\_rounds)$\;
+        \ForEach{$counter$ in $counters$}{
+            counter\_packets=$\{p\in packets : flow(p)\in counter.flow\}$\;
+            counter.value=$\sum\limits_{p \in counter\_packets}value(p)$\;
+        }
+        \If{$r < number\_rounds$}
+        {
+            $l=levels[r]-current\_level$\;
+            $top\_flowsets=sort(F, counters)[1:\floor{\frac{C}{2^l}]}$\;
+            $F=refine\_flowsets(top\_flowsets,l)$\;
+        }
+    }
+    $hh\_per\_level=calculate\_hh\_per\_level(\phi)$\;
+    $hhh\_per\_level=calculate\_hhh\_per\_level(\phi, hh\_per\_level)$\;
+    return $hh\_per\_level, hhh\_per\_level$
+    \SetAlgoRefName{\multipleAlgo}
+    \caption{}
+    \label{algo:multiple_split}
+\end{algorithm}

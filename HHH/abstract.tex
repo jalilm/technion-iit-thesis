@@ -1,0 +1,10 @@
+\section{Absract}
+Finding the network's heaviest flows is an important and challenging network monitoring task and a critical building block for many other applications.
+In the hierarchical heavy hitters (HHH) problem, one needs to identify the most frequent network IP-prefixes hierarchically.
+This is a challenging task since the number of relevant IP-prefixes of flows in a busy router is much higher than the number of counters.
+To address this point, many streaming algorithms were recently developed, but they use complex data-structures and usually have non-constant per-packet update-time, preventing them from being deployed in line-speed.
+A randomized constant-time algorithm was proposed recently; however, it is only applicable to extremely large streams.
+
+In this paper, we propose a constant-time algorithm for detecting the HHH that does not have any convergence requirements and achieves comparable results to state of the art.
+Furthermore, our algorithm uses only efficient built-in counters available in current network devices, making it deployable on commercially off-the-shelf network gear.
+We provide an analytical study of the problem and show, using emulation over real traffic, that our algorithm performs at least as well as the best-known streaming algorithms without performing expensive per-packet operations or requiring convergence periods.

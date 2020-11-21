@@ -9,7 +9,7 @@ The traces replayed into the network were slowed down by a factor of $11$ in ord
 For the evaluation we used two CAIDA traces, from 2014 and 2016\footnote{Data from 2015 was used in the comparison to RAP.}, considering 1-minute interval. The CAIDA'14 trace has the property that the top-$15$ flows are the same $15$ flow throughout every 12-second interval in this minute.
 On the other hand, the CAIDA'16 trace has a very significant heavy flow over the whole minute, while the next heaviest flows vary depending on which subinterval is considered. In this sense, the CAIDA'16 trace is an adversarial input due to lack of consistent heavy flows throughout the monitoring intervals.
 
-\subsection{Evaluation of local top-$k$ algorithms}
+\subsection{Evaluation of local top-k algorithms}
 First, we evaluated the performance of the algorithm \ref{algo:BasicSplitting} on both traces. For that, we conducted a series of experiments to solve $ApproxTop(S,k,\varepsilon)$, with different values of $k$ and $m$ using traffic from both datasets and a constant $\varepsilon=0.05$.
 
 To quantify the performance of the algorithms we define the approximate top-$k$ set ($ATk$), to be the set of flows with frequency higher than $(1-\varepsilon)n_k$, where $n_k$ is the frequency of the $k^{th}$ heaviest flow.

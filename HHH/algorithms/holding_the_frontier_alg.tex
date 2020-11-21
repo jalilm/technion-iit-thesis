@@ -1,0 +1,42 @@
+\begin{algorithm}\small
+    \SetKwInOut{Input}{Input}
+    \SetKwInOut{Output}{Output}
+    \Input{A stream of packets $S$, a threshold $\phi$, number of counters $C$ and the depth of the hierarchy $H$}
+    \Output{set of HH and HHH in $S$}
+    $F = init\_flowsets(C)$\;
+    $levels=calculate\_levels(C,H)$\;
+    $current\_level=levels[0]$\;
+    $number\_rounds=|levels|$\;
+    \ForEach{$r$ in $\{1..number\_rounds\}$}
+    {
+        $counters=assign\_counters(F)$\;
+        $P=get\_round\_packets(r, number\_of\_rounds)$\;
+        \ForEach{$counter$ in $counters$}{
+            counter.value=$\sum\limits_{\{p\in P : flow(p)\in counter.flowset\}}value(p)$\;
+        }
+        \If{$r < number\_rounds$}
+        {
+            $l=levels[r]-current\_level$\;
+            $to\_refine, retracted = retract\_frontier(counters, F, current\_level)$\;
+            $refined = refine\_flowsets(to\_refine,l)$\;
+            $needed\_counters = |refined \cup retraced|$\;
+            \If{$needed\_counters > C$}{
+                $abort()$\;
+            }
+            \Else{
+                $retracted = unretract\_frontier(C - needed\_counters, retracted)$\;
+            }
+            $F=refined \cup retracted$\;
+        }
+    }
+    return $calculate\_hhh\_bottom\_up(\phi)$\; 
+    \ignore{
+    $hh\_per\_level=calculate\_hh\_per\_level(\phi)$\;
+    $hhh\_per\_level=calculate\_hhh\_per\_level(\phi, hh\_per\_level)$\;
+    return $hh\_per\_level, hhh\_per\_level$\;
+    }
+    \SetAlgoRefName{\htfAlgo}
+    \caption{}
+    \label{algo:htf}
+    \vspace{-0.1cm}
+\end{algorithm}

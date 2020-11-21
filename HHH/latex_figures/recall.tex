@@ -1,0 +1,64 @@
+\begin{figure}
+    \centering
+    \begin{tikzpicture}
+        \begin{axis}[
+        xlabel={\# Counters},
+        ylabel={Recall},
+        xtick=data,
+        xticklabels={256, 512, 1k, 2k, 4k, 8k, 16k},
+        ytick={0,5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100},
+        % legend pos=south east,
+        % legend columns=2,
+        ymajorgrids=true,
+        grid style=dashed,
+        legend style ={ at={(1.03,1)}, 
+        anchor=north west, draw=black, 
+        fill=white,align=left},
+        cycle list name=black white,
+        smooth
+        ]
+            \addplot
+            coordinates {
+                (1,41.1)(2,49.9)(3,57.3)(4,63.5)(5,63.5)(6,63.5)(7,63.5)
+            };
+            \addlegendentry{SS'16};
+            \addplot
+            coordinates {
+                (1,52.7)(2,57.4)(3,62.1)(4,70.4)(5,71.2)(6,71.2)(7,71.2)
+            };
+            \addlegendentry{SS'18};
+            \addplot
+            coordinates {
+                (1,47.7)(2,53.4)(3,62.8)(4,67.2)(5,74.1)(6,76.02)(7,75.7)
+            };
+            \addlegendentry{MS'16};
+            \addplot
+            coordinates {
+                (1,54.9)(2,56.2)(3,59.1)(4,67.8)(5,73.2)(6,77.4)(7,79.3)
+            };
+            \addlegendentry{MS'18};
+            \addplot
+            coordinates {
+                (4,73.1)(5,76.0)(6,81.1)(7,84.4)
+            };
+            \addlegendentry{HTF'16};
+            \addplot+[black, mark=diamond]
+            coordinates {
+                (4,82.6)(5,86.2)(6,89.1)(7,90.7)
+            };
+            \addlegendentry{HTF'18};
+            \addplot
+            coordinates {
+                (1,60.1)(2,61.2)(3,67.9)(4,74.6)(5,78.3)(6,83.8)(7,87.0)
+            };
+            \addlegendentry{SA'16};
+            \addplot
+            coordinates {
+              (1,62.9)(2,68.8)(3,75.3)(4,85.1)(5,87.3)(6,91.4)(7,92.2)
+            };
+            \addlegendentry{SA'18};
+        \end{axis}
+    \end{tikzpicture}
+    \caption{The Recall of the algorithms for various number of counters on CAIDA'16 and CAIDA'18 traces.}
+    \label{fig:recall}
+\end{figure}

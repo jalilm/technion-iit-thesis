@@ -1,0 +1,10 @@
+\section{Conclusions}
+In this paper, we develop a family of practical, efficient memory-constrained algorithms for detecting the top-$k$ flows in terms of total traffic rate. These algorithms use built-in counters available in any switching node and are deployable “out of the box” on any OpenFlow enabled node. We evaluated the expected performance of these algorithms using real-life packet traces, and the evaluation shows that our new algorithms achieve high detection rates while maintaining full precision regardless of the packet rate. We also show that for the top-$k$ packet rate problem these algorithms perform as well as the best streaming algorithms that use complex data structures and much more elaborated computations. Moreover, for the more relevant weighted top-$k$ problem our algorithms outperform state-of-the-art streaming algorithm when evaluated over recent real traffic. 
+
+One future direction is to use this infrastructure as a building-block for detecting network-wise top-$k$ flows. We believe that combining the local performance described in this paper with a smart global policy about the number of counters to be used in each node, will lead to a deployable memory-efficient monitoring system for efficient detection of network-wise top-$k$ flows.
+
+
+
+
+
+

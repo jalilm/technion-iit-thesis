@@ -13,3 +13,64 @@
 % For this template, we'll only have one single command,
 % necessary for including graphics...
 \usepackage{graphicx}% http://ctan.org/pkg/graphicx
+
+
+
+\newcommand{\ignore}[1]{}
+% \usepackage[linesnumbered,ruled]{algorithm2e}
+% \usepackage{amsthm}
+% \theoremstyle{plain}
+
+\usepackage{amssymb}
+
+\usepackage{soul}
+\usepackage{xcolor}
+\usepackage{url}
+\usepackage{subfig}
+\usepackage{pgfplots}
+\usepackage{tikz}
+\usetikzlibrary{plotmarks, arrows}
+\usetikzlibrary{positioning, calc}
+\pgfplotsset{compat=newest}
+\tikzset{
+    treenode/.style = {inner sep=0pt, text centered,
+        draw=black, text width=2.2em, font=\sffamily},
+    non_front/.style = {treenode, white,, fill=black},
+    front/.style = {treenode, black},
+    unexp/.style = {treenode, black, dashed},
+}
+
+% argument #1: any options
+\newenvironment{customlegend}[1][]{
+    \begingroup
+    % inits/clears the lists (which might be populated from previous axes):
+    \csname pgfplots@init@cleared@structures\endcsname
+    \pgfplotsset{#1}%
+}{
+    % draws the legend:
+    \csname pgfplots@createlegend\endcsname
+    \endgroup
+}
+% makes \addlegendimage available (typically only available within an
+% axis environment):
+\def\addlegendimage{\csname pgfplots@addlegendimage\endcsname}
+% definition to insert numbers
+\pgfkeys{/pgfplots/number in legend/.style={
+        /pgfplots/legend image code/.code={
+            \node at (0.125,-0.0225){#1};
+        },
+    },
+}
+\pgfplotsset{
+    every legend to name picture/.style={west}
+}
+
+\usepackage[pscoord]{eso-pic}
+\newcommand{\placetextbox}[3]{
+    \setbox0=\hbox{#3}
+    \AddToShipoutPictureFG*{
+        \put(\LenToUnit{#1\paperwidth},\LenToUnit{#2\paperheight}){
+            \vtop{{\null}\makebox[0pt][c]{#3}}
+        }
+    }
+}

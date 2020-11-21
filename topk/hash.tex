@@ -1,0 +1,227 @@
+\section{The \ref{algo:HashNodeExactTop} Algorithm}
+The \ref{algo:BasicSplitting} algorithm takes decisions at the end of each epoch. A problematic aspect of this approach that several mid-weighted flows aggregated into a single flowset, might mask a true top-$k$ flow.
+
+\begin{figure}
+    \centering
+    \subfloat[Measuring $r_0$ and $r_1$ at the first epoch]{\label{subfig:mask_first_epoch}
+        \begin{tikzpicture}[,->,>=stealth',level/.style={sibling distance = 2cm/#1,level distance = 1cm}]
+        \coordinate (input);
+        \node (a) [front, left=3cm of input] {$r_0$}
+        child{ node [unexp] {$f_0$} 
+            child{ node [unexp] {$f_2$}}
+            child{ node [unexp] {$f_3$}}
+        }
+        child{ node [unexp] {$f_1$} 
+            child{ node [unexp] {$f_4$}}
+            child{ node [unexp] {$f_5$}}
+        };
+        \node (b) [front, right=0.5cm of input] {$r_1$}
+        child{ node [unexp] {$g_0$} 
+            child{ node [unexp] {$g_2$}}
+            child{ node [unexp] {$g_3$}}
+        }
+        child{ node [unexp] {$g_1$} 
+            child{ node [unexp] {$g_4$}}
+            child{ node [unexp] {$g_5$}}
+        };
+        \end{tikzpicture}
+    }
+    \hfill
+    \subfloat[Measurig $g_0$ and $g_1$ at the second epoch]{\label{subfig:mask_second_epoch}
+        \begin{tikzpicture}[->,>=stealth',level/.style={sibling distance = 2cm/#1,level distance = 1cm}]
+        \coordinate (input);
+        \node [non_front, left=3cm of input] {$r_0$}
+        child{ node [unexp] {$f_0$} 
+            child{ node [unexp] {$f_2$}}
+            child{ node [unexp] {$f_3$}}
+        }
+        child{ node [unexp] {$f_1$} 
+            child{ node [unexp] {$f_4$}}
+            child{ node [unexp] {$f_5$}}
+        };
+        \node [non_front, right=0.5cm of input] {$r_1$}
+        child{ node [front] {$g_0$} 
+            child{ node [unexp] {$g_2$}}
+            child{ node [unexp] {$g_3$}}
+        }
+        child{ node [front] {$g_1$} 
+            child{ node [unexp] {$g_4$}}
+            child{ node [unexp] {$g_5$}}
+        };
+        \end{tikzpicture}
+    }
+    \hfill
+    \subfloat[Measurig $g_2$ and $g_3$ at the last epoch]{\label{subfig:mask_last_epoch}
+        \begin{tikzpicture}[->,>=stealth',level/.style={sibling distance = 2cm/#1,level distance = 1cm}]
+        \coordinate (input);
+        \node [non_front, left=3cm of input] {$r_0$}
+        child{ node [unexp] {$f_0$} 
+            child{ node [unexp] {$f_2$}}
+            child{ node [unexp] {$f_3$}}
+        }
+        child{ node [unexp] {$f_1$} 
+            child{ node [unexp] {$f_4$}}
+            child{ node [unexp] {$f_5$}}
+        };
+        \node [non_front, right=0.5cm of input] {$r_1$}
+        child{ node [non_front] {$g_0$} 
+            child{ node [front] {$g_2$}}
+            child{ node [front] {$g_3$}}
+        }
+        child{ node [non_front] {$g_1$} 
+            child{ node [unexp] {$g_4$}}
+            child{ node [unexp] {$g_5$}}
+        };
+        \end{tikzpicture}
+    }
+    \caption{The true heaviest flow (top-$1$) $f_2$ is masked by several mid-weight flows $g_2, g_3, g_4, g_5$.}
+    \label{fig:mask}
+\end{figure}
+
+Figure~\ref{fig:mask} illustrates such masking situation. In this example, two counters are used to detect the top-$1$ flows (heaviest flow). The arrows between two flowsets indicate a relation of a $refine$ operation. We also assume a constant sizes of $(11, 1, 1, 1, 5, 4, 4, 4)$ for $(f_2, f_3, f_4, f_5, g_2, g_3, g_4, g_5)$ respectively. The correct output for this setup should be $f_2$, but as one can see in this example, the algorithm outputs $g_2$ instead.
+
+Subfigure~\ref{subfig:mask_first_epoch} depicts the first epoch of the monitoring, where the two counters measure the flowsets $r_0$ and $r_1$. At the end of this epoch, the usage values of $r_0$ and $r_1$ are $14$ and $17$ respectively. Thus, at the end of this epoch, the algorithm will assign the counters to measure $g_0$ and $g_1$ in the next epoch.
+
+After this decision had been taken, it is impossible for the algorithm to detect the actual top-$1$ flow. This is true since the algorithm does not have any recovery mechanism. I.e., once it decides not to explore down a branch containing a true top-$k$ flow, it stops assigning counters to that branch and the flow will never be considered again.
+
+Subfigures~\ref{subfig:mask_second_epoch} and ~\ref{subfig:mask_last_epoch} depict the behavior of the algorithm after the crucial wrong decision. They show how it measures $g_0$ and $g_1$ in the second epoch and $g_2$ and $g_3$ in the last epoch. This leads to outputting $g_2$ with usage value of $5$ as the heaviest flow, even though $f_2$ having usage value of $11$.
+
+The probability of such a masking to occur is highest during the very first decisions the algorithm takes. This is true, since the aggregated flowsets gets smaller by half with each new epoch, making it less likely for heavy-weighted flows to be masked by fewer mid-weighted flows.
+
+To overcome the lack of recovery mechanism, which is most evident when such masking occurs, we consider hashing the flows passing through the network node. The hashing process takes place by applying a bijection function $h:2^{\alpha} \rightarrow 2^{\alpha}$, where the flows are defined as strings from $\alpha$.
+
+The idea behind this is to distribute flows of all weights through all of the branches. This prevents the case of heavy aggregated flowsets that do not contain any heavy single flow. Since the output of the algorithm should be the id of the flow as decoded in the packets and the hashed id, the hash must be invertible and thus a bijection.
+
+An important aspect that must be addressed is the ability to implement such a hash function using current switches in line rate.  In order to do so, we limit our implementation to bit-swap hash functions, where several bits in the prefix and suffix of the IP address of the flow are swapped.  It is possible to implement such bit-swap functions using an Experimenter Action in OpenFlow, and the packet handling requires one additional table entry (see~\cite{OF1.5} for more details).
+
+To view the strengths of this approach we revisit the example from Figure~\ref{fig:mask} and consider the behavior of the algorithm while applying the hash function $h = \{f_2\rightarrow g_2, f_3\rightarrow g_4, f_4\rightarrow f_2, f_5\rightarrow f_5, g_2\rightarrow g_5, g_3\rightarrow g_3, g_4\rightarrow f_3, g_5\rightarrow f_4\}$.
+
+\begin{figure}
+    \centering
+    \subfloat[Measuring $r_0$ and $r_1$ at the first epoch]{\label{subfig:hash_first_epoch}
+        \begin{tikzpicture}[,->,>=stealth',level/.style={sibling distance = 2cm/#1,level distance = 1cm}]
+        \coordinate (input);
+        \node (a) [front, left=3cm of input] {$r_0$}
+        child{ node [unexp] {$f_0$} 
+            child{ node [unexp] {$h(f_4)$}}
+            child{ node [unexp] {$h(g_4)$}}
+        }
+        child{ node [unexp] {$f_1$} 
+            child{ node [unexp] {$h(g_5)$}}
+            child{ node [unexp] {$h(f_5)$}}
+        };
+        \node (b) [front, right=0.5cm of input] {$r_1$}
+        child{ node [unexp] {$g_0$} 
+            child{ node [unexp] {$h(f_2)$}}
+            child{ node [unexp] {$h(g_3)$}}
+        }
+        child{ node [unexp] {$g_1$} 
+            child{ node [unexp] {$h(f_3)$}}
+            child{ node [unexp] {$h(g_2)$}}
+        };
+        \end{tikzpicture}
+    }
+    \hfill
+    \subfloat[Measurig $g_0$ and $g_1$ at the second epoch]{\label{subfig:hash_second_epoch}
+        \begin{tikzpicture}[->,>=stealth',level/.style={sibling distance = 2cm/#1,level distance = 1cm}]
+        \coordinate (input);
+        \node [non_front, left=3cm of input] {$r_0$}
+        child{ node [unexp] {$f_0$} 
+            child{ node [unexp] {$h(f_4)$}}
+            child{ node [unexp] {$h(g_4)$}}
+        }
+        child{ node [unexp] {$f_1$} 
+            child{ node [unexp] {$h(g_5)$}}
+            child{ node [unexp] {$h(f_5)$}}
+        };
+        \node [non_front, right=0.5cm of input] {$r_1$}
+        child{ node [front] {$g_0$} 
+            child{ node [unexp] {$h(f_2)$}}
+            child{ node [unexp] {$h(g_3)$}}
+        }
+        child{ node [front] {$g_1$} 
+            child{ node [unexp] {$h(f_3)$}}
+            child{ node [unexp] {$h(g_2)$}}
+        };
+        \end{tikzpicture}
+    }
+    \hfill
+    \subfloat[Measurig $f_2$ as $h^{-1}(g_2)$ and $g_3$ as $h^{-1}(g_3)$ at the last epoch]{\label{subfig:hash_last_epoch}
+        \begin{tikzpicture}[->,>=stealth',level/.style={sibling distance = 2cm/#1,level distance = 1cm}]
+        \coordinate (input);
+        \node [non_front, left=3cm of input] {$r_0$}
+        child{ node [unexp] {$f_0$} 
+            child{ node [unexp] {$h(f_4)$}}
+            child{ node [unexp] {$h(g_4)$}}
+        }
+        child{ node [unexp] {$f_1$} 
+            child{ node [unexp] {$h(g_5)$}}
+            child{ node [unexp] {$h(f_5)$}}
+        };
+        \node [non_front, right=0.5cm of input] {$r_1$}
+        child{ node [non_front] {$g_0$} 
+            child{ node [front] {$h(f_2)$}}
+            child{ node [front] {$h(g_3)$}}
+        }
+        child{ node [non_front] {$g_1$} 
+            child{ node [unexp] {$h(f_3)$}}
+            child{ node [unexp] {$h(g_2)$}}
+        };
+        \end{tikzpicture}
+    }
+    \caption{The true heaviest flow (top-$1$) $f2$ is masked by several mid-weight flows $g_2, g_3, g_4, g_5$.}
+    \label{fig:hash}
+\end{figure}
+
+Subfigure~\ref{subfig:hash_first_epoch} depicts the first epoch of the monitoring, where the two counters measure the flowsets $r_0$ and $r_1$. At the end of this epoch, the sizes of $r_0$ and $r_1$ are $10$ and $21$ respectively. Thus, at the end of this epoch, the algorithm will assign the counters to measure $g_0$ and $g_1$ in the next epoch.
+
+In contrary to the previous scenario, now the heaviest flow $f_2$ is measured in the second epoch, as the flow $h^{-1}(g_2)$. In the second epoch, the sizes of $g_0$ and $g_1$ are $15$ and $6$ respectively. Thus, in the last epoch the algorithm monitors $f_2$ as $h^{-1}(g_2)$ and $g_3$ as $h^{-1}(g_3)$. In the last epoch, the algorithm (instead of outputting $g_2$ as the heaviest flows) outputs $f_2=h^{-1}(g_2)$ which is indeed the heaviest flow.
+
+A two-round algorithm that hashes the flow based on a given hash function is described in Algorithm \ref{algo:HashNodeExactTop}. The algorithm differs from the \ref{algo:MultiRound} Algorithm by the fact that in the second around it uses a given hash function to distribute the flows and prevent masking.
+
+It is worth to note that the function $get\_round\_hash\_function$ actually determines how the flows are hashed. In the first round, this function assigns both $h$ and $h^{-1}$ the identity function and no hashing occurs at the first round. This means, that the first round detects the heaviest $\frac{m}{2}$ flows and assigns them exact counters.
+
+The exclusion of the heaviest flows and the use of hash functions allow the less heavy flows of the true top-$k$ to stand out. Therefore, after the second round, the algorithm holds candidate heaviest $\frac{m}{2}$ flows from the first round and candidate next heaviest $\frac{m}{2}$ flows from the second round.
+
+\begin{algorithm}\small
+    \SetKwInOut{Input}{Input}
+    \SetKwInOut{Output}{Output}
+    \Input{A stream of packets $S$, A set of flows $O$ and positive integers $k, m$.}
+    \Output{top-$k$ flows from $O$ in $S$}
+    $F = generate\_flowsets(O)$\;
+    $number\_rounds=2$\; $exact\_flows=\phi$\;
+    \ForEach{$round$ in $\{1..number\_rounds\}$}
+    {
+        $exact\_counters=assign\_exact\_counters(F, \frac{m}{2}, exact\_flows)$\;
+        $needed\_epochs=calculate\_needed\_epochs(m, round)$\;
+        $packets=get\_round\_packets(round)$\;
+        \ForEach{$counter$ in $exact\_counters$}{
+            counter\_packets=$\{p\in packets : flow(p)\in counter.flow\}$\;
+            counter.value=$\sum\limits_{p \in counter\_packets}size(p)$\;
+        }
+        $h, h^{-1}=get\_round\_hash\_function(round)$\;
+        \ForEach{$epoch$ in $\{1..needed\_epochs\}$}
+        {
+            $aggregate\_counters=assign\_aggregate\_counters(F, \frac{m}{2}, epoch, round)$\;
+            $epoch\_start, epoch\_end=calculate\_epoch\_times(epoch, round)$\;
+            $packets=get\_epoch\_packets(epoch\_start, epoch\_end,$
+            $ round, exact\_flows)$\;
+            \ForEach{$counter$ in $aggregate\_counters$}{
+                counter\_packets=$\{p\in packets : h(flow(p))\in counter.flow\}$\;
+                counter.value=$\sum\limits_{p \in counter\_packets}size(p)$\;
+            }
+            \ForEach{$counter$ in $aggregate\_counters$}{
+                $counter.value+=parent\_counter.value-(epoch-1)*sibiling\_counter.value$
+            }
+            $\{hf_i\}^{\frac{m}{2}}_{i=1}=sort(F, aggregate\_counters)$\;
+            $F=\bigcup_{i=1}^{i=\frac{m}{4}}refine(hf_i)$\;
+        }
+        $\{f_i\}^{\frac{m}{2}}_{i=1}=\{h^{-1}(hf_i)\}^{\frac{m}{2}}_{i=1}$\;
+        $exact\_flows=sort(exact\_flows, exact\_counters, \{f_i\}^{\frac{m}{2}}_{i=1},$
+        $aggregate\_counters)[1:\frac{m}{2}]$\;
+    }
+    return $exact\_flows[1:k]$
+    \SetAlgoRefName{``Hash then Split''}
+    \caption{solving $ExactTop(S,O,k)$ using $m$ counters.}
+    \label{algo:HashNodeExactTop}
+\end{algorithm}

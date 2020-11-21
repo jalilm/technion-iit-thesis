@@ -1,0 +1,15 @@
+\section{The top-k Flows Problem}
+Given a network node and a set of flows, we are interested in detecting the top-$k$ flows, usually with respect to the total number of bits, in a given time interval. The solution is straightforward when there are sufficient counters, by allocating a specific counter to each flow. However, the number of available counters at the network node is much smaller than the number active of flows~\cite{OFLOPS}. Thus, the main challenge is detecting the top-$k$ flows while using a limited (constant) number of counters.
+
+In the classical frequent-element problem~\cite{Charikar2004}, a stream of elements $S=q_1,q_2,\dots,q_t$ and a set of objects $O=\{o_1,o_2,\dots,o_n\}$ are given, where any element of the stream belongs to exactly one object, i.e. $1\leq \forall j \leq t, 1\leq\exists i\leq n, q_j\in o_i$ and for all $z\neq i, q_j \notin o_z$.
+
+The frequency of each object $o_i$ in the stream, denoted by $n_i$, is defined as the number of elements that belong to $o_i$ in $S$. Without loss of generality we can assume that the $o_i$'s are sorted such that $n_1\geq n_2 \geq \dots \geq n_n$. The basic notion of the frequent-element problem is the $ExactTop$, its input consists of a stream $S$, a set of objects $O$ and an integer $k$, and it returns $k$ objects from $O$ that contain the most frequent objects in $S$.
+
+When there are more than $k$ objects in the stream that have very close frequencies to the top-$k$ frequencies, it is not important to detect precisely the top-$k$ objects. It is enough to detect any $k$ objects within a slack of the $k^{th}$ frequency. Thus, the $ApproxTop$ approximation problem was suggested in~\cite{Charikar2004}. It has an additional input parameter $\varepsilon$ which defines the slack's percentage.
+A solution to the $ApproxTop$ problem is a set of any $k$ flows that their frequency is $S$ is at least $(1-\varepsilon)n_k$.
+%An algorithm that solves the $ApproxTop$ problem returns $k$ objects that have a frequency of at least $(1-\varepsilon)n_k$ in $S$.
+
+Finding the top-$k$ flows from a network node traffic could be formulated as a frequent-element problem where the traffic is a stream of packets, $S=p_1,p_2,\dots,p_t$. Each packet $p_i$ is part of a specific flow, $flow(p_i)\in\{f_1,f_2,...f_n\}$. On contrary to a stream of simple elements, packets have different sizes and thus the weighted version of the frequent elements problem should be used. Note that this makes the algorithms more complex and the performance reported in~\cite{Ben-Basat2017} do not apply directly to this case.
+
+We say that an algorithm is a local top-$k$ algorithm if it runs on a network node with traffic $S$ and solves the $ApproxTop(S,O,k,\varepsilon)$ problem.
+%Furthermore, we say the algorithm is $p$-correct if it detects at least $pk$ flows of the top-$k$ flows flowing through the node, with their corresponding accurate measurements.

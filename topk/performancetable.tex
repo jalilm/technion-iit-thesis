@@ -1,0 +1,22 @@
+\begin{table*} 
+	\centering{
+		\resizebox{1\textwidth}{!}{
+				\begin{tabular}{|l||c c c c c|}
+				\hline
+                \#Counters & 32 & 64 & 128 & 512 & 1024 \\
+                \hline \hline
+                \ref{algo:BasicSplitting} & 0.976, 75.65\% & 0.976, 75.65\% & 0.932, 72.24\% & 0.911, 70.62\% & 0.892, 69.14\% \\
+                 \hline
+                 \ref{algo:HashNodeExactTop} & 0.964, 74.72\% & 0.957, 74.18\% & 0.874, 67.75\% & 0.888, 68.83\% & 0.851, 65.96\% \\
+                \hline
+                ``RAP"~\cite{Ben-Basat2017} & 0.841, 65.19\% & 0.840, 65.19\% & 0.833, 64.57\% & 0.831, 64.41\% & 0.827, 64.10\%\\
+                \hline
+                ``16W-RAP"~\cite{Ben-Basat2017} & 0.835, 64.72\% & 0.832, 64.49\% & 0.829, 64.26\% & 0.824, 63.87\% & 0.819, 63.48\% \\
+                \hline
+			\end{tabular}
+	}
+}
+	\normalsize
+	\caption{Throughput of the monitoring algorithms in million packets per second and performance rate in comparison to an OpenVSwitch performing at 1.29 MPPS.}
+	\label{tbl:ovs_perf}
+\end{table*}

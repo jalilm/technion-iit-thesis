@@ -1,0 +1,42 @@
+\section{The \ref{algo:BasicSplitting} Algorithm} \label{sec:approach}
+The main concept of our top-$k$ algorithms is to use \textit{prefix} trie to decide which aggregate set of flows (denoted by flowset in ~\cite{conf/sigcomm/YuanCM07}) to monitor in each time step. This follows the steps of~\cite{Moraney2016,conf/sigcomm/YuanCM07,Moshref2014}.
+
+In the \ref{algo:BasicSplitting} algorithm, we identify each flow by a unique \textit{string} over some alphabet and each flowset by a regular expression over the same alphabet, such that all flows contained in the flowset are the flows represented by the strings matching the flowset's regular expression. The motivation behind this approach is to identify each flow by an IP address and each flowset by a CIDR mask, such that a flowset is the group of all flows that their corresponding IP address is included in the flowset's CIDR mask.
+
+We partition the time into constant length discrete segments called epochs. The algorithm allocates counters at the beginning of each epoch to measure the aggregated size of a given flowset. At the end of the epoch and after receiving the measurements, the algorithm decides on a new allocation of the counters to (possibly new) flowsets.
+
+The algorithm works as follows. Given $m$ counters, at each epoch the algorithm partitions the universe of flows into a disjoint set of flowsets $F$. For each flowset $f\in F$, it assigns a counter to measure the aggregated size of all flows contained in $f$. At the end of each epoch, it examines the values of the counters and sorts the flowsets according to their size.
+
+According to the sorted results, the algorithm chooses the biggest $m/2$ flowsets and partition each of them into two disjoint flowsets. The motivation is to prepare a new set of $m$ flowsets to monitor at the next epoch. We denote the partitioning operation by $refine(f)$, which generates a set of disjoint flowsets that covers the biggest $m/2$ flowsets of the last epoch.
+
+After generating the refined flowsets, the set $F$ is modified to include the new flowsets and to exclude the old flowset. After a constant number of epochs, we get to a point where each flowset contains a single flow. At this point, the algorithm is monitoring a set of single flows for a whole epoch, it sorts them according to their size and outputs the highest $k$ flows as the top-$k$ flows.
+
+The main drawback of the \ref{algo:BasicSplitting} algorithm is that it assumes the stability of top-$k$ flows through any sub-interval. This assumption motivates the periodic refinement the algorithm performs.
+While in many cases the top-$k$ flows are active throughout the whole monitoring interval, it is not always the case. Furthermore, the algorithm suffers from lack of ``recovery mechanism'', which allows reconsidering previously discarded flowsets. This can make it miss some of the top-$k$ flows, even if they are very significant but were not active at the beginning of the monitoring interval.
+
+Another drawback of the algorithm is that it does not estimate the number of active flows in each flowset it monitors and does not consider it in its refinement decisions. This is crucial since the number of non-significant flows can be as high as $O(n)$ while the number of significant flows is usually in the hundreds. This drawback might lead to missing top-$k$ flows since an aggregated set of non-significant flows might mask the significant ones, in terms of aggregated size.
+
+\begin{algorithm}
+    \SetKwInOut{Input}{Input}
+    \SetKwInOut{Output}{Output}
+    \Input{A stream of packets $S$. A set of flows $O$. Positive integers $k,m$.}
+    \Output{top-$k$ flows from $O$ in $S$}
+    $F = generate_flowsets(O)$\;
+    $needed\_epochs=calculate\_needed\_epochs(m)$\;
+    \ForEach{$epoch$ in $\{1..needed\_epochs\}$}
+    {
+        $counters=assign\_counters(F, m, epoch)$\;
+        $epoch\_start, epoch\_end=calculate\_epoch\_times(epoch)$\;
+        $packets=get\_epoch\_packets(epoch\_start, epoch\_end)$\;
+        \ForEach{$counter$ in $counters$} {
+            counter\_packets=$\{p\in packets : flow(p)\in counter.flow\}$\;
+            counter.value=$\sum_{p\in counter\_packets}size(p)$\;
+        }
+        $\{f_1,f_2,\dots,f_m\}=sort(F, counters)$\;
+        $F=\bigcup_{i=1}^{i=\frac{m}{2}}refine(f_i)$\;
+    }
+    return $\{f_1,f_2,\dots,f_k\}$
+    \SetAlgoRefName{``Basic Splitting''}
+    \caption{Solving $ExactTop(S,O,k)$ using $m$ counters.}
+    \label{algo:BasicSplitting}
+\end{algorithm}

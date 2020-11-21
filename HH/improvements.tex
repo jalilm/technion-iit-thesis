@@ -1,0 +1,19 @@
+\section{\eb\ Algorithm}
+\label{sec:improvemnts}
+In this section we  present a simplification of the \cs\ algorithm that have better performance when the trace is heavy tailed, meaning that most of the traffic is due to a small number of flows.
+
+This algorithms holds a similar \sfa\ as the \cs\ algorithm, however it lacks the \cs\ itself and the \sea. Instead, it holds a constant size bank of exact counters. The main motivation is that in heavy tailed traces, most of the traffic is produced by the HH flows, thus it is possible to allocate about $\frac{1}{\phi}$ exact counters to measure these flows.
+
+The usage of the \sfa\ assures that we are not propagating too many flows in the \eb\ and only measure ``heavy" flows. The cost of this simple setup manifests in the insertion operation that requires searching the $\frac{1}{\phi}$ entries to find the appropriate entry. Another drawback of this setup, is that increasing the amount of available memory and thus the size of the \sfa\ potentially will degrade the performance.  This is due to the fact that more flows now propagate to the \eb\ even though they are not ``heavy" enough.
+
+\begin{maybeappendix}{imp}
+\dannysays{I did not read this yest}
+\jalilsays{No need, there will be no space for them}
+In this section we  present several possible improvements of the \cs\ algorithm and discuss their benefits and trade-offs and how they affect the theoretical guarantees.
+\subsection{Several \sfa s}
+In this suggestion, the allocated memory of the \sfa, $m_{SFA}$, is partitioned into several constant different arrays. An arriving packet, gets hashed using different hash function into different entries in each of the arrays. If the flow is present in any of the arrays, then it will be propagated to the \cs. The motivation behind this improvement, is to lower the risk of a HH not being propagated due to being hashed to the same entry as other active flows. This change will reduce the amount of times a flow should arrive until propagated to the \cs\ and thus the probability to miss it.
+\subsection{Storing Flows Fingerprints}
+In an effort to reduce the amount of memory needed by entries of the \cs\ and the \sfa, it is possible to store a fingerprint of the flow id instead of the full $104$. Such fingerprinting was introduced in~\cite{RanFP}, and it is a calculation of a pseudo-random bit-strings generated as hashes of the identifiers. This calculation have the property that if the stream contains $D\leq F$ distinct items, then fingerprints of size $O(log D)$ will suffice to ensure that no two items have a fingerprint collision. 
+\subsection{Exact Counter Bank}
+In this suggestion, when a flow hits the maximal estimator, instead of performing $ShiftUpEstimators$ it propagates from the \cs\ to a special bank of exact counters. This follows the motivation of the \eb\ algorithm without sacrificing the robustness of the \cs\ algorithm. This means that once a flow is that large then it is most probably a HH flow that we do not want to evict at all, and since we will do that to at most $\frac{1}{\phi}$ flows, the size of the bank will be constant. For that, we will have to adjust slightly the insertion and query operations and reduce the memory of the \cs\ in favour of the exact counter bank.
+\end{maybeappendix}

@@ -7,7 +7,7 @@ Furthermore, it is very practical to assign counters to measure flowsets that co
 
 \input{HHH/latex_figures/flowsets.tex}
 
-The main concept of this algorithm and our general approach is to facilitate the widely available easy measuring of such flowsets to calculate a set of suspect Heavy Hitter Flows and Hierarchical Heavy Hitter Flows. These sets are created by following paths of suspect heavy hitters flowsets down a \textit{prefix trie}, where in each step the suspect flowset is broken into several disjoint flowsets to be measured independently. This follows the steps of~\cite{conf/sigcomm/YuanCM07,Moraney2016, Moraney2018}.
+The main concept of this algorithm and our general approach is to facilitate the widely available easy measuring of such flowsets to calculate a set of suspect Heavy Hitter Flows and Hierarchical Heavy Hitter Flows. These sets are created by following paths of suspect heavy hitters flowsets down a \textit{prefix trie}, where in each step the suspect flowset is broken into several disjoint flowsets to be measured independently. This follows the steps of~\cite{conf/sigcomm/YuanCM07,Moraney2016, moraney2018}.
 
 In all of our algorithms, we identify each flow by a unique \textit{string} over some alphabet and each flowset by a regular expression over the same alphabet, such that all flows contained in the flowset are the flows represented by the strings matching the flowset's regular expression. The motivation behind this approach is to identify each flow by an IP address and each flowset by a CIDR mask, such that a flowset is the group of all flows that their corresponding binary representation of the IP address is included in the flowset's CIDR mask.
 

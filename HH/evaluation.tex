@@ -19,24 +19,28 @@ The \cs\ algorithm and the IM-SUM algorithm provide different accuracy guarantee
 
 \subsection{Results}
 
-\input{HH/figures/figure4}
+\input{HH/figures/figure2}
 
-Figure~\ref{figure2} shows the average DR of the algorithms as a function of the number of packets processed. Intuitively, the DR relies heavily on the amount of available memory and one can see that the more memory allocated of the algorithms, the higher the DR rate is. When evaluating the \cs\ algorithm, we tested several variants with different partition of the memory between the \cs\ and the \sfa. These variants allocates 30\%,50\%,70\% of the memory to the \cs\ and 69\%,49\%,29\% to the \sfa\ accordingly.
+Figures~\ref{fig:fig2_a}-~\ref{fig:fig2_f} show the average DR of the algorithms as a function of the number of packets processed. Intuitively, the DR relies heavily on the amount of available memory and one can see that the more memory allocated of the algorithms, the higher the DR rate is. When evaluating the \cs\ algorithm, we tested several variants with different partition of the memory between the \cs\ and the \sfa. These variants allocates 30\%,50\%,70\% of the memory to the \cs\ and 69\%,49\%,29\% to the \sfa\ accordingly.
 
 It is not clear how this trade off between the size of the \cs\ and the size of the \sfa\ affects the performance of the algorithm. When \cs\ is large the algorithm can hold on to ``big" flows while when  \sfa\ is large the algorithm can hold on to the more ``recent" flows. One can see that while the partition is balanced enough, that means there are no too few entries in the \sfa\ nor in the \cs\ and the effect on DR is small.
 
-Sub-figures~\ref{fig:fig2_a} and~\ref{fig:fig2_b} show that the \cs\ performs better than IM-SUM algorithm for amounts of memory smaller than 64KB and in some settings even finds 50\% more HH flows. However, it is worthy to note that, that both algorithm's DR degrades when processing more packets in this range of memories, which is unexpected since none of the algorithms guarantees relies on $N$.
-Sub-figures~\ref{fig:fig2_c} to~\ref{fig:fig2_f} show that this phenomenon of DR degradation when the number of packets increase is not present in the \cs\ algorithm compared to the IM-SUM algorithm.
+Figures~\ref{fig:fig2_a} and~\ref{fig:fig2_b} show that the \cs\ performs better than IM-SUM algorithm for amounts of memory smaller than 64KB and in some settings even finds 50\% more HH flows. However, it is worthy to note that, that both algorithm's DR degrades when processing more packets in this range of memories, which is unexpected since none of the algorithms guarantees relies on $N$.
+Figures~\ref{fig:fig2_c} to~\ref{fig:fig2_f} show that this phenomenon of DR degradation when the number of packets increase is not present in the \cs\ algorithm compared to the IM-SUM algorithm.
 
 However, this is not the case for IM-SUM algorithm. The more memory the algorithm have the higher the DR, while the more packets processed the lower the DR. That is, for a given amount of memory our algorithm can process more packets without compromising its DR.
 
-Figure~\ref{figure3} shows the average FPR of the algorithms as a function of the number of packets processed. It is worthy to note that the FPR of the \cs\ algorithm does not depend on the amount of memory, that is, using more memory does not affect the FPR. This is true since the algorithm's FPR depends directly on the estimation given by the \sea, and this estimation is always accurate up to $1\pm \delta$, regardless of the amount of memory. This also explains the lack of effect of the value of $m_{CS}$ on the FPR.
+\input{HH/figures/figure3}
+
+Figures~\ref{fig:fig3_a}-~\ref{fig:fig3_f} show the average FPR of the algorithms as a function of the number of packets processed. It is worthy to note that the FPR of the \cs\ algorithm does not depend on the amount of memory, that is, using more memory does not affect the FPR. This is true since the algorithm's FPR depends directly on the estimation given by the \sea, and this estimation is always accurate up to $1\pm \delta$, regardless of the amount of memory. This also explains the lack of effect of the value of $m_{CS}$ on the FPR.
 
 Interestingly, when the IM-SUM algorithm is given enough memory and not much packets, it will not report false positive flows. However, for each memory settings there is an amount of packets where the algorithm starts reporting almost 100\% false positive flows, this means that the vast majority of the reported set of flows are non HH flows.
 
 When considering the comparison of the algorithms in terms of FPR, it is evident that the \cs\ algorithm performs better. For less than $64KB$ it is always less than IM-SUM's FPR, while for larger amounts of memory it stays pretty constant in the range 40\%-60\% while IM-SUM's FPR soars quickly to around 100\%.
 
-Figure~\ref{figure4} shows the throughput in terms of insertions per millisecond of the algorithms as a function of the number of packets processed. For both algorithms, the more packets processed for a given amount of memory, the higher the throughput. In the case of IM-SUM, it seems that for $N=10^4$ we get the highest throughput. However, this datapoint is an anomaly since with that few packets, the algorithm does not perform the heavy maintenance operation.
+\input{HH/figures/figure4}
+
+Figures~\ref{fig:fig4_a}-~\ref{fig:fig4_f} show the throughput in terms of insertions per millisecond of the algorithms as a function of the number of packets processed. For both algorithms, the more packets processed for a given amount of memory, the higher the throughput. In the case of IM-SUM, it seems that for $N=10^4$ we get the highest throughput. However, this datapoint is an anomaly since with that few packets, the algorithm does not perform the heavy maintenance operation.
 
 In the case of the \cs\ algorithms, the more packets we process the higher the throughput due to the fact that more packets yield's higher $v_0$ and higher values in the \sea. This is translated to less operations per packet, since its insertion is probabilistic with inverse relation to the values in the \sea. This is also supported by the fact that the \cs\ algorithm performs $O(1)$ ``maintenance" operations compared to IM-SUM amortized maintenance operation.
 
@@ -45,5 +49,3 @@ It is worth to note that the throughput of our algorithm is not affected by the 
 \input{HH/figures/figure5}
 
 Figure~\ref{figure5} compares the DR of the \cs\ algorithm with the \eb\ algorithm with three sizes of banks 1000, 2000 and 3000. Since each 1000 entries in the \eb\ algorithm requires around $16KB$, the algorithm suffers from poor DR in the smaller ranges of the memory. However, once the memory allows a decent size of the \sfa, the \eb\ algorithm starts to perform better since many more HH flows are propagating to the bank and have now an exact estimation up to the \pe\ introduced by the \sfa. One should note, that for \eb\ with size 1000 the DR becomes poor once again the larger the \sfa, that is since larger \sfa\ is propagating too many flows to the \eb\ and without an eviction. It is important to note, this higher DR comes with a cost of lower throughput and higher FPR, since it performs a linear search in the size of the bank (which is constant) and it returns all flows in the \eb\ as potential HH.
-
-\dannysays{we do not evaluate the actual size of the flows - maybe not needed for an HH algorithm = but should we at least mention it?}

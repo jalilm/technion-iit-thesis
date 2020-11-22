@@ -2,7 +2,7 @@
 	\centering
     \subfloat[The hierarchical flowset $f_3 \cup f_4\cup f_5\cup f_6$ can be measured by measuring $f_0$.]{
         \label{subfig:hierarchical_flowset}{
-            \begin{tikzpicture}[->,>=stealth',level/.style={sibling distance = 2cm/#1,level distance = 1cm}]
+            \begin{tikzpicture}[->,>=stealth',level/.style={sibling distance = 3cm/#1,level distance = 1.5cm}]
             \coordinate (input);
             \node (a) [front, left=3cm of input] {$f_0$}
             child{ node [unexp] {$f_1$} 
@@ -17,7 +17,7 @@
         }}
     \subfloat[The non Hierarchical flowset $f_3 \cup f_4 \cup f_6$, requires at least measuring $f_1$ and $f_6$.] {
         \label{subfig:HHH_second_epoch}{
-            \begin{tikzpicture}[->,>=stealth',level/.style={sibling distance = 2cm/#1,level distance = 1cm}]
+            \begin{tikzpicture}[->,>=stealth',level/.style={sibling distance = 3cm/#1,level distance = 1.5cm}]
             \coordinate (input);
             \node (a) [non_front, left=3cm of input] {$f_0$}
             child{ node [front] {$f_1$} 

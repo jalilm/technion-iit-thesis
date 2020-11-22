@@ -15,7 +15,7 @@ The main drawback of the \ref{algo:BasicSplitting} algorithm is that it assumes 
 While in many cases the top-$k$ flows are active throughout the whole monitoring interval, it is not always the case. Furthermore, the algorithm suffers from lack of ``recovery mechanism'', which allows reconsidering previously discarded flowsets. This can make it miss some of the top-$k$ flows, even if they are very significant but were not active at the beginning of the monitoring interval.
 
 Another drawback of the algorithm is that it does not estimate the number of active flows in each flowset it monitors and does not consider it in its refinement decisions. This is crucial since the number of non-significant flows can be as high as $O(n)$ while the number of significant flows is usually in the hundreds. This drawback might lead to missing top-$k$ flows since an aggregated set of non-significant flows might mask the significant ones, in terms of aggregated size.
-\usepackage{algorithmic}
+
 \begin{algorithm}
     \SetKwInOut{Input}{Input}
     \SetKwInOut{Output}{Output}

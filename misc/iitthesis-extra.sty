@@ -83,32 +83,32 @@
 % isn't currently a patched version of algorithmicx which one could
 % include, so the rougher workaround is to be used:
 
-\def\@arabic#1{\number#1}
+% \def\@arabic#1{\number#1}
 
-% note that the above workaround might disrupt Hebrew numbering in some
-% cases (see rlbabel.def for details). With the workaround in place, we
-% can include the packages for algorithmicx:
-\RequirePackage{algorithmicx}
-% this defines algorithmic-like statement commands
-\RequirePackage{algcompatible}
+% % note that the above workaround might disrupt Hebrew numbering in some
+% % cases (see rlbabel.def for details). With the workaround in place, we
+% % can include the packages for algorithmicx:
+% \RequirePackage{algorithmicx}
+% % this defines algorithmic-like statement commands
+% \RequirePackage{algcompatible}
 
-% both algorithmic and algorithmicx are used in conjunction with the
-% algorithm package, which is used for the outer float environment
-% {algorithm}, which has the caption and delimiting rules
-\RequirePackage[chapter]{algorithm}
+% % both algorithmic and algorithmicx are used in conjunction with the
+% % algorithm package, which is used for the outer float environment
+% % {algorithm}, which has the caption and delimiting rules
+% \RequirePackage[chapter]{algorithm}
 
-\providecommand*{\toclevel@algorithm}{0}
+% \providecommand*{\toclevel@algorithm}{0}
 
-% A mechanism for setting the font size in algorithms
-% usage:
-% put a \algorithmicfontsize{\small} or \algorithmicfontsize{\normalsize}
-% before beginning the algorithmic environment, but within the algorithm
-% environment.
-\newcommand{\algorithmicfontsize}[1]{%
- \makeatletter
- \renewcommand{\ALG@beginalgorithmic}{#1}%
- \makeatother
-}
+% % A mechanism for setting the font size in algorithms
+% % usage:
+% % put a \algorithmicfontsize{\small} or \algorithmicfontsize{\normalsize}
+% % before beginning the algorithmic environment, but within the algorithm
+% % environment.
+% \newcommand{\algorithmicfontsize}[1]{%
+%  \makeatletter
+%  \renewcommand{\ALG@beginalgorithmic}{#1}%
+%  \makeatother
+% }
 % -----------------------------------------------------------------
 
 % Note there are all sorts of constraints on package loading order. For

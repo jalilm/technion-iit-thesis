@@ -1,13 +1,12 @@
 \section{The \simpleAlgo Algorithm}
 
 In general, the term \textit{flowset}~\cite{conf/sigcomm/YuanCM07} is used to describe the stream formed from an aggregation of flows.
-In the context of this paper
-we are interested only in flowsets that cover a full hierarchy.
+In the context of this chapter we are interested only in flowsets that cover a full hierarchy.
 Furthermore, it is very practical to assign counters to measure flowsets that cover a full hierarchy, using wild-cards matching techniques widely available in any traditional network gear and over the shelf SDN switches~\cite{OVS, OF1.5}.
 
 \input{HHH/latex_figures/flowsets.tex}
 
-The main concept of this algorithm and our general approach is to facilitate the widely available easy measuring of such flowsets to calculate a set of suspect Heavy Hitter Flows and Hierarchical Heavy Hitter Flows. These sets are created by following paths of suspect heavy hitters flowsets down a \textit{prefix trie}, where in each step the suspect flowset is broken into several disjoint flowsets to be measured independently. This follows the steps of~\cite{conf/sigcomm/YuanCM07,Moraney2016, moraney2018}.
+The main concept of this algorithm and our general approach is to facilitate the widely available easy measuring of such flowsets to calculate a set of suspect Heavy Hitter Flows and Hierarchical Heavy Hitter Flows. These sets are created by following paths of suspect heavy hitters flowsets down a \textit{prefix trie}, where in each step the suspect flowset is broken into several disjoint flowsets to be measured independently. This follows the steps of~\cite{conf/sigcomm/YuanCM07,Moraney2016}.
 
 In all of our algorithms, we identify each flow by a unique \textit{string} over some alphabet and each flowset by a regular expression over the same alphabet, such that all flows contained in the flowset are the flows represented by the strings matching the flowset's regular expression. The motivation behind this approach is to identify each flow by an IP address and each flowset by a CIDR mask, such that a flowset is the group of all flows that their corresponding binary representation of the IP address is included in the flowset's CIDR mask.
 
@@ -29,7 +28,7 @@ The static nature of the splitting and the observations about the nature of HH a
 \begin{figure}
 	\centering
     \includegraphics[width=\linewidth]{HHH/jpg_figures/init.JPG}
-\caption{Given $C=256$ counters, the algorithm partitions the IP\_SRC hierarchy ($H=32$) at level $8$ into disjoint sets and assigns a counter per flowset.}
+\caption[An example of partitioning the hierarchy given $256$ counters]{Given $C=256$ counters, the algorithm partitions the IP\_SRC hierarchy ($H=32$) at level $8$ into disjoint sets and assigns a counter per flowset.}
 \label{fig:init}
 \end{figure}
 

@@ -9,7 +9,7 @@ Given a \textit{stream} of packets, $\mathcal S$ (sometimes referred to also as 
 Given a threshold $\phi$, an element of the hierarchy (either a prefix or a specific flow) $x$, is a \textit{Heavy Hitter (HH)} if its frequency is at least $\phi$ of the total frequencies of all elements, i.e., $f_x \geq \phi T$. The \textit{Conditioned frequency} of prefix $p$ with respect to a set of prefixes $P$, $cf_p(P)$, is the sum of frequencies of all elements that $p$ generalizes without those of $P$. That is, we subtract from the frequency of $p$ the sum of frequencies of the flows that are generalized by elements of the set $P$.
 
 Given a threshold $\phi$, an element of the hierarchy (either a prefix or a specific flow) is a \textit{Hierarchical Heavy Hitter (HHH)} if its conditioned frequency with respect to the set of HHH  is at least $\phi T$.  Another way to define the set of HHH for a given a stream of packets and a threshold $\phi$, is to build it recursively. The set $HHH_H$ is the set of HH at the lowest level of the hierarchy, i.e., $HHH_H=\{x\in \mathcal U| f_x \geq \phi T\}$. The set $HHH_l$, is the set of all prefixes at level $l$ that their conditional frequency with respect to $HHH_{l+1}$ is at least $\phi T$, i.e., $HHH_l=\{p \text{ at level } l | cf_p(HHH_{l+1}) \geq \phi T\}$. Then, the set of all HHH from all the levels of the hierarchy is $HHH=\bigcup_{l=0}^{H}HHH_l$.
- Table~\ref{tab:def} contains the list of symbols and notations we use throughout this paper.
+ Table~\ref{tab:def} contains the list of symbols and notations we use throughout this chapter.
 \begin{table}[ht]
 	%\footnotesize
 	\centering{

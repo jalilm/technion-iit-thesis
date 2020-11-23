@@ -1,46 +1,25 @@
 \chapter{Introduction}
 \label{chap:intro}
-% do we need to add TOC lines?
 
-%\begin{figure}
-%  \centering
-%  \includegraphics[width=0.75\textwidth]{main/graphics/a_blowup.pdf}
-%  \caption{This is a caption}
-%\end{figure}
+Modern Infrastructure as a Service (IaaS) providers rely on various network protocols to provide efficient service management abilities. These protocols, as well, rely heavily on the ability to provide correct and efficient network monitoring that generate the needed statistics. Such protocols belong to various service management sub-domains such as traffic engineering~\cite{microte}, anomaly detection~\cite{Moraney2016}, load balancing~\cite{networkLB}, NFV placements~\cite{NFV-dor} and many more.
 
-Here you can introduce the field, survey past results, give context, use citations of course... (e.g. \cite{Papadimitriou1994}). It is probably worthwhile to clarify the goals or targets of the research and describe the process, unless this is done later.
+The ability to provide accurate per flow statistics, while greatly important for service management protocols, is often impractical due to the high number of active flows and the limited on-chip memory needed to keep such counters. Furthermore, no remediation is expected in the near future; more flows are flowing through networks than before, line rate is ever increasing requiring counters with more width and more monitoring applications are running, requiring their own portion of the available memory. 
 
-You can also introduce \emph{a key concept} (or rather, several) without formally defining them until later on.
+Given these limitations, it is important to consider designing and implementing efficient practical algorithms for various monitoring tasks. We consider an algorithm to be an efficient practical monitoring algorithm if (1) it provides important monitoring data, (2) performs $O(1)$ operations per packet to cope with line rate, (3) uses a constant limited amount of memory that is much smaller than and not related to the number of active flows, and finally (4) implementable on memory schemes of off-the-shelf network gear.
 
-\subsection*{An unnumbered subsection}
+The problems of detection the top-$k$ flows, the heavy hitter flows and the hierarchical heavy hitter flows, are typical monitoring task in sense that they are straightforward to solve with memory-intensive solutions.. When sufficient memory is available, one can track the frequency of each flow and process the frequencies off-line to detect the required flows. However, with memory constraints in mind, it is challenging to design monitoring algorithms for these problems using constant (or even sub-linear) space with respect to the number of active flows or the overall traffic size.
 
-You may want to break up the intro into parts with titles. Subsectioning without numbering is an option you might want to consider.
+Many of the current state-of-the-art and most notable monitoring schemes, require a non-constant amount of memory depending either on the traces size or in inverse relation to the guaranteed accuracy~\cite{slidingHH,metwally2005efficient,SpaceSaving,Ben-Basat2017}. In such schemes, the required memory is usually of size $o(\frac{1}{\epsilon})$ where $\epsilon$ is the guaranteed accuracy. This notation  hides the fact that in many practical use-cases their memory requirement is  higher than what is available in the network device.
 
-Some people include a specific section overviewing the results ("In Chapter so-and-so, we will see how etc.") which is also a way of describing the structure of the thesis. But this is not necessary.
+With the increasing amount of various monitoring applications running concurrently on network devices, the approach of setting accuracy parameters per application and only then count for their required memory is not operational. This approach makes it hard for network operators to meet the memory constraint by prioritizing applications and optimizing their accuracy parameters. The correct approach to manage on-device monitoring applications is to set hard constraints on their memory footprint and only then set the desired accuracy parameters while slightly compromise the quality of the monitoring results according to the available resources. 
 
-\subsection*{Thesis options and appearance}
+The quality of the monitoring results is commonly measured via two metrics, \textit{Recall} and \textit{False Positive Rate} (FPR). Recall (sometimes refereed to also as Detection Rate) measures the proportion of positives items that are correctly identified while the FPR measures the proportion of the none-positive items that are reported as positive (i,e,. misidentified) from the set of reported items.  Describing the quality of the monitoring data without reporting both metrics is not complete. Since, while high recall algorithms are preferred, this should not come at a a price of a very high FPR. An extreme example of such algorithm is the one that reports all flows as positive, this algorithm will have a recall of $100\%$ but also almost a $100\%$ FPR hindering its output useless.
 
-Please note that the \texttt{iitthesis} class has several options when you use it, such as:
-\begin{itemize}
-\item \texttt{fullpageDraft} to avoid the margins necessary for proper binding when you make the final print
-\item \texttt{beforeDefense} makes the personal acknowledgements invisible; use this to print the copies you submit initially to the grad school for sending to the opponent panel, i.e. thesis readers (who shouldn't see those parts). For the final submission, after having successfully defended --- drop this option. 
-\item \texttt{noabbrevs} no notation \& abbreviations list will be included in the thesis.
-\end{itemize}
+Having on-device monitoring algorithms that support line rate is of high importance, no network operator in right mind would consider reducing network capacity due to the deployment of monitoring algorithms on devices. The guarantee of line rate performance usually manifests in having $O(1)$ operations per packet, the motivation is if the algorithm performs only ``light weight" operation per arriving packet it would meet the line rate requirement.
 
-\subsection*{Hebrew font}
+Many monitoring algorithms maintain complex schemes and data structures that require once in a while perform a ``heavy" operation (for example a re-ordering of the data scheme). Algorithms of this type claim to support line rate while having an amortized $O(1)$ operation by proving that this ``heavy" operation happens once in many packets and when its cost is split among all the relevant packets it would add a constant negligible effect.
 
-The \texttt{iitthesis} document class uses the David CLM font family for Hebrew text. CLM is a shorthand for ``Culmus'' (\texthebrew{קולמוס}) --- the name of a freely-available Hebrew font package. It may be bundled with your LaTeX distribution, or otherwise, must be available as system fonts. If you're missing the Culmus fonts, try adding an appropriate package from your LaTeX distribution or system distribution; alternatively, you might want to visit the Culmus project page at \url{http://culmus.sourceforge.net/} and download and install the fonts manually.
+This point of view on line rate operation is in many cases impractical. While truly it is an amortized $O(1)$ operation, during such operations, arriving packets must be stored to be later processed and this could affect the devices available buffers and affects its performance. Thus, one of our motivations is to design a scheme that performs worst-case $O(1)$ operation.
 
-\subsection*{Setting thesis meta-data and publication information}
-
-The document class used to generate this document defines several commands you can use to set information  regarding your thesis, which is used in the title pages and elsewhere in the front matter.  Every (or almost every) command has an English and a Hebrew variant, with a \texttt{English} or \texttt{Hebrew} suffix to the command name. Examples:
-\begin{itemize}
-\item \verb|\titleHebrew|, \verb|\titleEnglish|
-\item \verb|\authorHebrew|, \verb|\authorEnglish|
-\item \verb|\JewishDateHebrew|, \verb|\JewishDateEnglish|
-\item \verb|\GregorianDateHebrew|, \verb|\GregorianDateEnglish|
-\item \verb|\publicationinfoHebrew|, \verb|\publicationinfoEnglish|
-\end{itemize}
-
-The file \texttt{misc/thesis-fields.tex} contains invocations of several such commands (some of them commented-out with \texttt{\%}), and some additional information about them.
+The rest of the dissertation is organized as follows; In Chapter~\ref{cha:topk} we introduce the top-$k$ problem and our efficient practical algorithms that outperform the state of the art algorithms for the weighted variant of the problem. In Chapter~\ref{cha:HHH} we follow the techniques of time-based reconfigurations of counters presented in Chapter~\ref{cha:topk}, to tackle the Hierarchical Heavy Hitter problem and introduce practical algorithms for it that match the state of the art algorithms while keeping with line rate and not requiring convergence period. In Chapter~\ref{cha:HH}, we present an algorithm based on shared estimators for the Heavy Hitter problem that outperforms state of the art algorithm for amounts of memory less than 0.25MB. Finally, we conclude in Chapter~\ref{chap:conclusion}.
 

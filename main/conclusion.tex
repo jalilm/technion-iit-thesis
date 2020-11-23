@@ -1,23 +1,18 @@
-\chapter{Conclusion and open questions}
+\chapter{Conclusions and Future Directions}
 \label{chap:conclusion}
 
-This kind of chapter can include may different things (or only some of them):
-\begin{itemize}
-\item Discussion of results
-\item Conclusions from the results or from the process in general
-\item Open questions for future research, resulting from the research performed or from the results obtained
-\end{itemize}
+In this dissertation, we presented our point of view of what should be considered a practical, efficient and resource-constrained monitoring algorithm. We presented such algorithms for three famous problems in the domain of network monitoring, the top-$k$ problem, the Hierarchical Heavy Hitter Problem and the Heavy Hitter problem. For each of these problems we surveyed the state of the art algorithms and identified their impracticality constraints. Afterwards, we compared our algorithms performance against the state of the art algorithms on real internet traces and showed that they perform and at least as good as the state of the art algorithms, and for some settings even better, for the lower end of the range of available memory without suffering their impracticality constrains. 
 
-But not things like the bibliography or other back matter which is generated outside of this chapter.
+In Chapter~\ref{cha:topk}, we introduced a family of practical, efficient memory-constrained algorithms for detecting the top-$k$ flows in terms of total traffic rate. These algorithms use built-in counters available in any switching node and are deployable “out of the box” on any OpenFlow enabled node. We evaluated the expected performance of these algorithms using real-life packet traces, and the evaluation shows that our new algorithms achieve high detection rates while maintaining full precision regardless of the packet rate. We also show that for the top-$k$ packet rate problem these algorithms perform as well as the best streaming algorithms that use complex data structures and much more elaborated computations. Moreover, for the more relevant weighted top-$k$ problem our algorithms outperform state-of-the-art streaming algorithm when evaluated over recent real traffic. 
 
+In Chapter~\ref{cha:HHH}, we presented several practical memory-constrained algorithms for Hierarchical Heavy Hitters detection. These algorithms can be deployed on off-the-shelf network nodes (or software devices) and can operate in line speed due to their $O(1)$ per-packet operation. The current state of the art algorithms, either require $O(H)$ per-packet operation that makes them unfeasible to be deployed in line rate or requires a convergence interval before reporting satisfactory results which makes them less relevant in many practical settings. In contrary, our algorithms perform in line-speed with $O(1)$ update per-packet without requiring any convergence interval. Furthermore, no complex data structures are needed and our algorithms only require using built-in fast counters available in any network node.
 
-\section{Some conclusion}
+We evaluated the algorithms on two recent real Internet packets traces and showed that they yield a comparable results to the state of the art without their limitations. The evaluation showed that the best algorithm can detect up to 90\% of the HHH in a trace and report no more than 5\% non HHH flows.
 
-Here is what I conclude.
+These algorithms could be easily extend to the case of multi-dimensional HHH while keeping the depth of the hierarchy linear in the number of dimensions without modifying the $O(1)$ update time. Also, they allow practical detection of the weighted set of HHH flows with minimal modification of the update operations while keeping all of the algorithms promises.
 
-\section{Some open questions}
+In Chapter~\ref{cha:HH}, we introduced a new algorithm for detecting Heavy Hitter flows. Our algorithm performs better than the state of art algorithm for practical sizes of available on device memory. The estimated frequency reported by the algorithm is in the range of $1\pm \delta$ from their actual frequency. Furthermore, we evaluated our algorithm on real internet traces and showed that it performs better, in terms of Detection Rate, False Positive Ratio and Throughput, than best existing algorithms in various settings. More specifically, when processing $10^7$ packets our algorithm performs better for any amount of memory less than $1MB$. This also holds for $10^6, 10^5$ packets with memories of $0.5MB, 0.25MB$ respectively.
 
-\paragraph{A question in brief.} In \autoref{chap:firstchap} we explored a certain subject, but what about this-or-that idea? Perhaps it is worth exploring. Can one produce interesting results?
+\section*{Future Directions}
 
-\paragraph{A second question in brief.} A broader exposition of the question and indications of directions or ideas regarding its resolution.
-
+One possible future direction of this work, is to facilitate the presented algorithms as building-blocks for detecting network-wise top-$k$, Hierarchical Heavy Hitter and Heavy Hitter flows. We believe that combining the local performance described in this document with a smart global policy about the number of counters or amount of memory to be used in each node, will lead to a deployable memory-efficient network-wide monitoring systems. Furthermore, we believe that the study of the control mechanism in such network-wide monitoring system will turn up to be of great importance to the system's efficiency and practicality.

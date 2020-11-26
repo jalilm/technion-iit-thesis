@@ -86,7 +86,7 @@ Given $m_{SEA}$ memory for the \sea, we calculate the width of a single estimato
 \subsubsection{\sfa\ Initialization}
 The \sfa\ is initialized as an empty array without any stored flow id. Furthermore, we initialize a hash function $h_1:F\rightarrow k$, which maps every flow id to its entry in the \sfa.
 
-Given $m_{SFA}$ memory for the \sfa, we calculate the size of the array using $k=\lfloor \frac{m_{SFA}}{|flow\_id|} \rfloor$. Where $|flow\_id|$ is the number of bits needed to store the flow identifier and in the case of IPv4 5-tuple flows of the $(ip\_src, ip\_dst, src\_port, dst\_port, protocol)$ its $104$.
+Given $m_{SFA}$ memory for the \sfa, we calculate the size of the array using $k=\lfloor \frac{m_{SFA}}{|flow\_id|} \rfloor$. Where $|flow\_id|$ is the number of bits needed to store the flow identifier and in the case of IPv4 5-tuple flows of the $<$IP\_SRC, IP\_DST, SRC\_PORT, DST\_PORT, PROTOCOL$>$ its $104$.
 
 \subsubsection{\cs\ Initialization}
 The \cs\ is initialized as an empty array that does not hold any flow id and all indexes are initialized to 0. That is, there is no flow that the algorithm think is a candidate to be a HH flow and all of the initial estimations are $v_0$. Furthermore, we initialize a hash function $h_2:F\rightarrow M$, which maps every flow id to its entry in the \cs.

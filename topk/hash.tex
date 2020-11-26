@@ -78,7 +78,7 @@ The \ref{algo:BasicSplitting} algorithm takes decisions at the end of each epoch
     \label{fig:mask}
 \end{figure}
 
-Figure~\ref{fig:mask} illustrates such masking situation. In this example, two counters are used to detect the top-$1$ flows (heaviest flow). The arrows between two flowsets indicate a relation of a $refine$ operation. We also assume a constant sizes of $(11, 1, 1, 1, 5, 4, 4, 4)$ for $(f_2, f_3, f_4, f_5, g_2, g_3, g_4, g_5)$ respectively. The correct output for this setup should be $f_2$, but as one can see in this example, the algorithm outputs $g_2$ instead.
+Figure~\ref{fig:mask} illustrates such a masking situation. In this example, two counters are used to detect the top-$1$ flows (heaviest flow). The arrows between two flowsets indicate a relation of a $refine$ operation. We also assume a constant sizes of $(11, 1, 1, 1, 5, 4, 4, 4)$ for $(f_2, f_3, f_4, f_5, g_2, g_3, g_4, g_5)$ respectively. The correct output for this setup should be $f_2$, but as one can see in this example, the algorithm outputs $g_2$ instead.
 
 Subfigure~\ref{subfig:mask_first_epoch} depicts the first epoch of the monitoring, where the two counters measure the flowsets $r_0$ and $r_1$. At the end of this epoch, the usage values of $r_0$ and $r_1$ are $14$ and $17$ respectively. Thus, at the end of this epoch, the algorithm will assign the counters to measure $g_0$ and $g_1$ in the next epoch.
 
@@ -90,7 +90,7 @@ The probability of such a masking to occur is highest during the very first deci
 
 To overcome the lack of recovery mechanism, which is most evident when such masking occurs, we consider hashing the flows passing through the network node. The hashing process takes place by applying a bijection function $h:2^{\alpha} \rightarrow 2^{\alpha}$, where the flows are defined as strings from $\alpha$.
 
-The idea behind this is to distribute flows of all weights through all of the branches. This prevents the case of heavy aggregated flowsets that do not contain any heavy single flow. Since the output of the algorithm should be the id of the flow as decoded in the packets and the hashed id, the hash must be invertible and thus a bijection.
+The idea behind this is to distribute flows of all weights through all of the branches. This prevents the case of heavily aggregated flowsets that do not contain any heavy single flow. Since the output of the algorithm should be the id of the flow as decoded in the packets and the hashed id, the hash must be invertible and thus a bijection.
 
 An important aspect that must be addressed is the ability to implement such a hash function using current switches in line rate.  In order to do so, we limit our implementation to bit-swap hash functions, where several bits in the prefix and suffix of the IP address of the flow are swapped.  It is possible to implement such bit-swap functions using an Experimenter Action in OpenFlow, and the packet handling requires one additional table entry (see~\cite{OF1.5} for more details).
 
@@ -177,9 +177,9 @@ Subfigure~\ref{subfig:hash_first_epoch} depicts the first epoch of the monitorin
 
 In contrary to the previous scenario, now the heaviest flow $f_2$ is measured in the second epoch, as the flow $h^{-1}(g_2)$. In the second epoch, the sizes of $g_0$ and $g_1$ are $15$ and $6$ respectively. Thus, in the last epoch the algorithm monitors $f_2$ as $h^{-1}(g_2)$ and $g_3$ as $h^{-1}(g_3)$. In the last epoch, the algorithm (instead of outputting $g_2$ as the heaviest flows) outputs $f_2=h^{-1}(g_2)$ which is indeed the heaviest flow.
 
-A two-round algorithm that hashes the flow based on a given hash function is described in Algorithm \ref{algo:HashNodeExactTop}. The algorithm differs from the \ref{algo:MultiRound} Algorithm by the fact that in the second around it uses a given hash function to distribute the flows and prevent masking.
+A two-round algorithm that hashes the flow based on a given hash function is described in Algorithm \ref{algo:HashNodeExactTop}. The algorithm differs from the \ref{algo:MultiRound} Algorithm by the fact that in the second round it uses a given hash function to distribute the flows and prevent masking.
 
-It is worth to note that the function $get\_round\_hash\_function$ actually determines how the flows are hashed. In the first round, this function assigns both $h$ and $h^{-1}$ the identity function and no hashing occurs at the first round. This means, that the first round detects the heaviest $\frac{m}{2}$ flows and assigns them exact counters.
+It is worth to note that the function $get\_round\_hash\_function$ actually determines how the flows are hashed. In the first round, this function assigns both $h$ and $h^{-1}$ the identity function and no hashing occurs. This means, that the first round detects the heaviest $\frac{m}{2}$ flows and assigns them exact counters.
 
 The exclusion of the heaviest flows and the use of hash functions allow the less heavy flows of the true top-$k$ to stand out. Therefore, after the second round, the algorithm holds candidate heaviest $\frac{m}{2}$ flows from the first round and candidate next heaviest $\frac{m}{2}$ flows from the second round.
 
